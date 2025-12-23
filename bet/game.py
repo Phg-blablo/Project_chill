@@ -2,6 +2,7 @@ from random import randint
 class Game:
     def __init__(self, players):
         self.players = []
+    #hàm tung xúc sắc ngẫu nhiên
     def randomdice(self, player):
         player.dice1 = randint(1,6)
         player.dice2 = randint(1,6)
@@ -9,6 +10,7 @@ class Game:
         player.total = player.dice1+player.dice2+player.dice3
         player.threekind = (player.dice1 == player.dice2 == player.dice3)
         return player.total, player.threekind
+    #hàm nhập số tiền
     def bet_money(self, player):
         while True:
             try:
@@ -23,6 +25,7 @@ class Game:
             except ValueError:
                 print('Invalid input, try again')
         return player.bet
+    #hàm chọn kết quả và đặt cược
     def bet_number(self, player):
         while True:
             try:  
@@ -34,6 +37,7 @@ class Game:
                     print('Invalid choice')
             except ValueError:
                 print('Invalid input! Try again')
+    #hàm thông báo kết quả
     def win_rate(self, player):
         if player.choice == 'over' and player.total >10 and not player.threekind:
             print('You win:', player.bet*1.5)
@@ -47,6 +51,7 @@ class Game:
         else:
             print('You lose all your bet, try again')
             return -player.bet
+    #hàm lưu kết quả
     def play(self, player):
         self.bet_money(player)
         self.bet_number(player)

@@ -18,6 +18,17 @@ def choose_room_type():
             return choice
         else:
             print("Chon sai con me may roi ngu a, chon lai di cu")
+def num_stay():
+    while True: 
+        try:
+            number_of_night = int(input("Nhap so dem o: "))
+            if number_of_night >= 1:
+                print("Tong cong dem o: ", number_of_night)
+                return number_of_night
+            else:
+                print("Vui long nhap lai")
+        except ValueError:
+            print("vui long nhap lai")
 def payment_process(amount):
     while True:
         print(f"so tien can thanh toan: {amount:,} USD")
@@ -33,8 +44,12 @@ def payment_process(amount):
 def testing():
     room_type= choose_room_type()
     price = get_room_prices(room_type)
+    nights = num_stay()
+    total_amount = nights*price
     print(f"Ban da chon phong: {room_type}")
-    if payment_process(price):
+    print(f'So dem ban da o: {nights}')
+    print(f'Tong so tien: {total_amount}')
+    if payment_process(total_amount):
         print("Dat phong thanh cong")
     else:
         print("Dat phong khong thanh cong")

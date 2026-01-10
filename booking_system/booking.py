@@ -28,6 +28,58 @@ def num_stay():
                 print("Vui long nhap lai")
         except ValueError:
             print("vui long nhap lai")
+def cus_name():
+    while True:
+        name = str(input("Nhap ten: ")).strip()
+        if not name or name.isdigit():
+            print("Ten khong hop le, vui long nhap lai: ")
+        else:
+            return name
+def cus_age_main(): #nhap tuoi khach dat phong
+    while True:
+        try:
+            age = int(input("Nhap so tuoi: "))
+            if age <18:
+                print("Nguoi dat phong can tren 18 tuoi")
+            else:
+                return age
+        except ValueError:
+            print("Invalid input, try again")
+def cus_num(): #nhap so luong khach bao gom ca nguoi dat phong
+    while True:
+        try:
+            cus_num = int(input("Nhap so luong khach: "))
+            if cus_num <1:
+                print("Phai co it nhat 1 khach")
+            else:
+                return cus_num
+        except ValueError:
+            print("Invalid input, try again")
+def cus_age_other(cus_num): #nhap tuoi cua khach con lai khong tinh khach dat phong
+    print("Nhap tuoi so khach con lai: ")
+    ages=[]
+    for i in range (cus_num-1):
+        while True:
+            try:
+                age = int(input(f"Tuoi khach thu {i + 2}: "))
+                if age <=0 :
+                    print("Vui long nhap lai")
+                else:
+                    ages.append(age)
+                    break
+            except ValueError:
+                print("Invalid input, try again")
+    return ages
+def num_room():
+    while True:
+        try:
+            num_room = int(input("Nhap so phong: "))
+            if num_room <1:
+                print("Phai co toi thieu 1 phong, vui long nhap lai: ")
+            else:
+                return num_room
+        except ValueError:
+            print("Invalid input, try again")
 def payment_process(amount):
     while True:
         print(f"so tien can thanh toan: {amount:,} USD")
@@ -41,19 +93,28 @@ def payment_process(amount):
             return False
         else:
             print("invalid choices")
-def testing():
+def main():
     room_type= choose_room_type()
+    room_info= room_prices[room_type] #chinh lai hien thi loai phong
     price = get_room_prices(room_type)
     nights = num_stay()
     total_amount = nights*price
-    print(f"Ban da chon phong: {room_type}")
+    main_name = cus_name()
+    main_age = cus_age_main()
+    total_guest=cus_num()
+    other_ages=cus_age_other(total_guest) if total_guest > 1 else []
+    all_ages = [main_age]+other_ages
+    print(f"Ten nguoi dat phong: {main_name}")
+    print(f"Ban da chon phong: {room_info['name']}")
+    print(f"Tong so luot khach va tuoi: {total_guest}")
     print(f'So dem ban da o: {nights}')
-    print(f'Tong so tien: {total_amount}')
+    print(f"So khach va tuoi {all_ages}")
+    print(f'Tong so tien: {total_amount} USD')
     if payment_process(total_amount):
         print("Dat phong thanh cong")
     else:
         print("Dat phong khong thanh cong")
-testing()
+main()
 print(today)
 
 """

@@ -2,18 +2,22 @@ from datetime import datetime, date
 today = date.today()
 #Thay đổi dict để chọn dễ hơn, thay bằng database sau (SQL, MySQL, SQLite,...)
 room_prices={
-    "1": {"name": "standard", "price": 1},
-    "2": {"name": "delux", "price": 5},
-    "3": {"name": "suite", "price": 10}
+    "1": {"name": "standard", "price": 1, "capacity": 2}, #update thêm capacity phòng
+    "2": {"name": "delux", "price": 5, "capacity": 3},
+    "3": {"name": "suite", "price": 10, "capacity": 5}
 }
-def get_room_prices(choice):
-    return room_prices[choice]["price"]
-def choose_room_type():
+def available_rooms(total_cus): #function đưa ra các option phù hợp với số lượng khách
+    avaiable = {}
+    for key, info in room_prices.items():
+        if total_cus <= info['capacity']:
+            avaiable[key] = info
+    return avaiable
+def choose_room_type(avaiable_rooms):
     while True:
-        for key, info in room_prices.items():
-            print(f"{key}. {info['name']} - {info['price']} USD")
+        for key, info in avaiable_rooms.items():
+            print(f"{key}. {info['name']} - {info['price']} USD - {info['capacity']} khach/phong")
         choice = input("Chon loai phong: ").lower()
-        if choice in room_prices:
+        if choice in avaiable_rooms:
             return choice
         else:
             print("Chon sai con me may roi ngu a, chon lai di cu")
@@ -94,21 +98,24 @@ def payment_process(amount):
         else:
             print("invalid choices")
 def main():
-    room_type= choose_room_type()
-    room_info= room_prices[room_type] #chinh lai hien thi loai phong
-    price = get_room_prices(room_type)
-    nights = num_stay()
-    total_amount = nights*price
     main_name = cus_name()
     main_age = cus_age_main()
     total_guest=cus_num()
+    nights = num_stay()
+    available_room = available_rooms(total_guest)
+    if not available_room:
+        print("Khong co phong phu hop")
+        return
+    room_type= choose_room_type(available_room)
+    room_info= room_prices[room_type] #chinh lai hien thi loai phong
+    price = get_room_prices(room_type)
+    total_amount = nights*price
+   
     other_ages=cus_age_other(total_guest) if total_guest > 1 else []
-    all_ages = [main_age]+other_ages
     print(f"Ten nguoi dat phong: {main_name}")
     print(f"Ban da chon phong: {room_info['name']}")
-    print(f"Tong so luot khach va tuoi: {total_guest}")
-    print(f'So dem ban da o: {nights}')
-    print(f"So khach va tuoi {all_ages}")
+    print(f"Tong so khach: {total_guest}")
+    print(f'So dem: {nights}')
     print(f'Tong so tien: {total_amount} USD')
     if payment_process(total_amount):
         print("Dat phong thanh cong")

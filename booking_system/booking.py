@@ -80,7 +80,7 @@ def collect_guest_info():
         "main age": main_age,
         "total_guest": total_guest,
     }
-def collect_extra_info():
+def collect_extra_info(total_guest):
     other_age = other_customers_age(total_guest) if total_guest > 1 else []
     night = number_of_stay()
     return {
@@ -119,14 +119,14 @@ def payment_process(amount): #Thanh toán
             return False
         else:
             print("invalid choices")
-def start_booking():
+def start_booking(): #Hàm chạy booking
     guest = collect_guest_info()
     room = select_room(guest['total_guest'])
     if not room:
         print("Không có phòng phù hợp, cảm ơn đã lựa chọn")
         return
-    extra_info = collect_extra_info()
-    total_amount = guest['night'] * room['price']
+    extra_info = collect_extra_info(guest['total_guest'])
+    total_amount = extra_info['night'] * room['price']
     print("\n--- XÁC NHẬN ---")
     print("Tên: ", guest['name'])
     print("Hạng phòng: ", room['name'])
@@ -147,11 +147,14 @@ def main_menu(): #Hàm chạy chính
             print_room_info()
         elif choice == '2':
             start_booking()
+            break
         elif choice == '3':
             print("Cảm ơn đã lựa chọn")
+            break
         else:
             print("Invalid input, try again")
-main_menu()
+if __name__ == '__main__':
+    main_menu()
 print(today)
 
 """

@@ -2,125 +2,142 @@ from datetime import datetime, date
 today = date.today()
 #Thay đổi dict để chọn dễ hơn, thay bằng database sau (SQL, MySQL, SQLite,...)
 room_prices={
-    "1": {"name": "standard", "price": 1, "capacity": 2}, #update thêm capacity phòng
+    "1": {"name": "standard", "price": 1, "capacity": 2}, #Update thêm capacity phòng
     "2": {"name": "delux", "price": 5, "capacity": 3},
     "3": {"name": "suite", "price": 10, "capacity": 5}
 }
-def available_rooms(total_cus): #function đưa ra các option phù hợp với số lượng khách
-    avaiable = {}
-    for key, info in room_prices.items():
-        if total_cus <= info['capacity']:
-            avaiable[key] = info
-    return avaiable
-def choose_room_type(avaiable_rooms):
+def print_room_info(): #In thông tin phòng trước khi điền thông tin
+    print("\n ---DANH SÁCH PHÒNG---")
+    for info in room_prices.values():
+        print(
+            f"{info['name']} | "
+            f'{info['price']} USD/đêm | '
+            f'Tối đa {info['capacity']} khách '
+        )
+
+#Điền thông tin
+def customer_name(): 
     while True:
-        for key, info in avaiable_rooms.items():
-            print(f"{key}. {info['name']} - {info['price']} USD - {info['capacity']} khach/phong")
-        choice = input("Chon loai phong: ").lower()
-        if choice in avaiable_rooms:
-            return choice
-        else:
-            print("Chon sai con me may roi ngu a, chon lai di cu")
-def num_stay():
-    while True: #vòng while True để người dùng chọn sai sẽ có cơ hội chọn lại mà không end program
-        try:
-            number_of_night = int(input("Nhap so dem o: "))
-            if number_of_night >= 1:
-                print("Tong cong dem o: ", number_of_night)
-                return number_of_night
-            else:
-                print("Vui long nhap lai")
-        except ValueError:
-            print("vui long nhap lai")
-def cus_name():
-    while True:
-        name = str(input("Nhap ten: ")).strip()
+        name = input("Nhập tên khách đặt phòng: ").strip()
         if not name or name.isdigit():
-            print("Ten khong hop le, vui long nhap lai: ")
+            print("Tên không hợp lệ, vui lòng nhập lại")
         else:
             return name
-def cus_age_main(): #nhap tuoi khach dat phong
+def main_customer_age():
     while True:
         try:
-            age = int(input("Nhap so tuoi: "))
-            if age <18:
-                print("Nguoi dat phong can tren 18 tuoi")
+            age = int(input("Nhập tuổi của người đặt phòng: "))
+            if age < 18:
+                print("Người đặt phòng phải trên 18 tuổi, vui lòng nhập lại")
             else:
                 return age
         except ValueError:
             print("Invalid input, try again")
-def cus_num(): #nhap so luong khach bao gom ca nguoi dat phong
+def number_of_customer():
     while True:
         try:
-            cus_num = int(input("Nhap so luong khach: "))
-            if cus_num <1:
-                print("Phai co it nhat 1 khach")
+            guest_number = int(input("Vui lòng nhập số lượng khách: "))
+            if guest_number < 1:
+                print("Phải có ít nhất 1 khách, vui lòng nhập lại")
             else:
-                return cus_num
+                return guest_number
         except ValueError:
             print("Invalid input, try again")
-def cus_age_other(cus_num): #nhap tuoi cua khach con lai khong tinh khach dat phong
-    print("Nhap tuoi so khach con lai: ")
-    ages=[]
-    for i in range (cus_num-1):
+def other_customers_age(total_guest):
+    print("Nhập tuổi của các khách còn lại")
+    ages = []
+    for i in range (total_guest - 1):
         while True:
             try:
-                age = int(input(f"Tuoi khach thu {i + 2}: "))
-                if age <=0 :
-                    print("Vui long nhap lai")
+                age = int(input(f"Tuổi khách thứ {i + 2}: "))
+                if age <= 0:
+                    print("Tuổi không hợp lệ, vui lòng nhập lại")
                 else:
                     ages.append(age)
                     break
             except ValueError:
                 print("Invalid input, try again")
     return ages
-def num_room():
-    while True:
+def number_of_stay():
+    while True: #vòng while True để người dùng chọn sai sẽ có cơ hội chọn lại mà không end program
         try:
-            num_room = int(input("Nhap so phong: "))
-            if num_room <1:
-                print("Phai co toi thieu 1 phong, vui long nhap lai: ")
+            nights = int(input("Nhập số đêm ở dự kiến: "))
+            if nights >= 1:
+                print("Tổng cộng số đêm ở: ", nights)
+                return nights
             else:
-                return num_room
+                print("Phải có tối thiểu 1 đêm, vui lòng nhập lại")
         except ValueError:
-            print("Invalid input, try again")
-def payment_process(amount):
+            print("Invalid input, try agian")
+
+#Tổng hợp thông tin đã điền
+def collect_guest_info():
+    name = customer_name()
+    main_age = main_customer_age()
+    total_guest = number_of_customer()
+    return {
+        "name": name,
+        "main age": main_age,
+        "total_guest": total_guest,
+    }
+def collect_extra_info():
+    other_age = other_customers_age(total_guest) if total_guest > 1 else []
+    night = number_of_stay()
+    return {
+        "other age": other_age,
+        "night": night
+    }
+def available_rooms(total_guest):
+    return {
+        key: info
+        for key, info in room_prices.items()
+        if total_guest <= info['capacity']
+    }
+def select_room(total_guest):
+    rooms = available_rooms(total_guest)
+    if not rooms:
+        return None
     while True:
-        print(f"so tien can thanh toan: {amount:,} USD")
-        choice = input("xac nhan thanh toan (yes/no): ").lower()
+        print("Các phòng khả dụng")
+        for key, info in rooms.items():
+            print(f"{key}. {info['name']} - {info['price']} USD - {info['capacity']} khách/phòng")
+        choice = input("Chọn phòng: ")
+        if choice in rooms:
+            return rooms[choice]
+        else:
+            print("Lựa chọn không hợp lệ, vui lòng chọn lại!")
+def payment_process(amount): #Thanh toán
+    while True:
+        print(f"Số tiền cần thanh toán: {amount:,} USD")
+        choice = input("Xác nhận thanh toán (yes/no): ").lower()
         if choice == "yes":
             paid_time = datetime.now().replace(second=0, microsecond=0)
-            print("Chuyen thanh toan", paid_time)
+            print("Thanh toán .....", paid_time)
             return True
         elif choice == "no":
-            print("Thanh toan bi huy")
+            print("Thanh toán bị hủy")
             return False
         else:
             print("invalid choices")
-def main():
-    main_name = cus_name()
-    main_age = cus_age_main()
-    total_guest=cus_num()
-    nights = num_stay()
-    available_room = available_rooms(total_guest)
-    if not available_room:
-        print("Khong co phong phu hop")
+def main(): #Hàm chạy chính
+    print_room_info()
+    guest = collect_guest_info()
+    room = select_room(guest['total_guest'])
+    if not room:
+        print("Không có phòng phù hợp, cảm ơn đã lựa chọn")
         return
-    room_type= choose_room_type(available_room)
-    room_info= room_prices[room_type] #chinh lai hien thi loai phong
-    price = get_room_prices(room_type)
-    total_amount = nights*price
-   
-    other_ages=cus_age_other(total_guest) if total_guest > 1 else []
-    print(f"Ten nguoi dat phong: {main_name}")
-    print(f"Ban da chon phong: {room_info['name']}")
-    print(f"Tong so khach: {total_guest}")
-    print(f'So dem: {nights}')
-    print(f'Tong so tien: {total_amount} USD')
+    extra_info = collect_extra_info()
+    total_amount = guest['night'] * room['price']
+    print("\n--- XÁC NHẬN ---")
+    print("Tên: ", guest['name'])
+    print("Hạng phòng: ", room['name'])
+    print("Số khách: ", guest["total_guest"])
+    print("Số đêm: ", extra_info["night"])
+    print("Tổng số tiền cần thanh toán: ", total_amount, "USD")
     if payment_process(total_amount):
-        print("Dat phong thanh cong")
+        print("Đặt phòng thành công, cảm ơn đã tin tưởng")
     else:
-        print("Dat phong khong thanh cong")
+        print("Đã hủy quá trình đặt phòng, cảm ơn đã lựa chọn")
 main()
 print(today)
 

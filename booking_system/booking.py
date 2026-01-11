@@ -119,8 +119,7 @@ def payment_process(amount): #Thanh toán
             return False
         else:
             print("invalid choices")
-def main(): #Hàm chạy chính
-    print_room_info()
+def start_booking():
     guest = collect_guest_info()
     room = select_room(guest['total_guest'])
     if not room:
@@ -138,7 +137,21 @@ def main(): #Hàm chạy chính
         print("Đặt phòng thành công, cảm ơn đã tin tưởng")
     else:
         print("Đã hủy quá trình đặt phòng, cảm ơn đã lựa chọn")
-main()
+def main_menu(): #Hàm chạy chính
+    while True:
+        print("1. Xem phòng")
+        print("2. Đặt phòng")
+        print("3. Thoát")
+        choice = input("Chọn: ")
+        if choice == '1':
+            print_room_info()
+        elif choice == '2':
+            start_booking()
+        elif choice == '3':
+            print("Cảm ơn đã lựa chọn")
+        else:
+            print("Invalid input, try again")
+main_menu()
 print(today)
 
 """

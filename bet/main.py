@@ -2,40 +2,35 @@ from player import Player
 from game import Game
 from ranking import Rank
 #hàm khởi động trò chơi, hỏi số lượng người, hỏi tuổi
-def main():
-    numplayers = int(input('How many people you guys want to play: '))
+def create_players ():
+    num_players = int(input('Nhập số lượng người chơi: '))
     players = []
-    for i in range (numplayers):
-        name = input(f'Enter name of players {i+1}: ')
+    for i in range (num_players):
+        name = input(f'Nhập tên người chơi: {i+1}: ')
         while True:
             try:
-                age = int(input(f'Enter age of player {i+1}: '))
-                if age <18:
-                    print('Sorry, customers must be older than 18')
-                    return 
-                else:
-                    print('Vertify......')
-                    break
+                age = int(input('Nhập số tuổi của người chơi: '))
+                if age <16:
+                    print('Người chơi phải trên 16 tuổi!, vui lòng nhập lai')
+                    continue
+                break
             except ValueError:
-                print('Invalid input, try again!!')
-                return
+                print('Hãy nhập lại đúng định dạng!')
         players.append(Player(name, age))
-    if not players:
-        print('Sorry, we are out of business right now, please come back later!!!')
-        return
-    g = Game(players)
+    return players
+def bet_amout (game, player):
     while True:
-        for player in players:
-            if player.account > 0:
-                print('Turn of ', player.name)
-                g.play(player)
+        try:
+            bet = float(input('Nhập số tiền cược: '))
+            ok, msg = game.valid_bet(player, bet)
+            if ok:
+                return bet
             else:
-                print(player.name, 'you are bankrupt, please come back next time')
-        again = input('Do you guys want to continue(yes/no): ').strip().lower()
-        if again != 'yes':
-            print('Thank you for choosing us, see you next time!!!!')
-            break
-    r = Rank(players)
-    r.ranking()
+                print(msg)
+        except ValueError:
+            print('Vui lòng nhập lại: ')
+def main():
+    players = create_players()
+    game = Game(players)
 if __name__ == '__main__':
     main()
